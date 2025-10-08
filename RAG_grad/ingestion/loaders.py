@@ -58,17 +58,15 @@ def load_resources():
     return docs
 
 def load_courses():
-    plan_path = BASE_DIR / "data" / "plans_cleaned.json"
+    plan_path = BASE_DIR / "data" / "majors_plan_static_info.json"
     with open(plan_path, "r", encoding="utf-8") as f:
         course_data = json.load(f)
 
     def format_course(course):
         return f"""
 اسم المادة: {course.get("اسم المادة", "")}
-نوع: {course.get("نوع", "")}
 السنة: {course.get("السنة", "")}
 الفصل: {course.get("الفصل", "")}
-المتطلبات السابقة: {", ".join(course.get("المتطلبات السابقة", [])) if course.get("المتطلبات السابقة") else "لا توجد متطلبات سابقة"}
 وصف المساق: {course.get("وصف المساق", "")}
 """.strip()
 
@@ -80,12 +78,10 @@ def load_courses():
                 metadata={
                     "major": major,
                     "subject": course.get("اسم المادة", ""),
-                    "type": course.get("نوع", ""),
                     "year": course.get("السنة", ""),
                     "semester": course.get("الفصل", ""),
-                    "prerequisites": course.get("المتطلبات السابقة", []),
                     "description": course.get("وصف المساق", ""),
-                    "name":"الخطط الدراسية"
+                    "name":"الخطط الدراسية-ثابتة"
                 }
             ))
     return docs
@@ -136,6 +132,100 @@ def load_projects():
         ))
     return docs
 
+def load_schedule():
+    schedule_path = BASE_DIR / "data" / "info_according_semester.json"
+    with open(schedule_path, "r", encoding="utf-8") as f:
+        schedule_data = json.load(f)
+
+    docs = []
+    for major, courses in schedule_data.items():  # كل تخصص
+        for course_name, course_info in courses.items():  # كل مادة
+            for section in course_info.get("الشعب", []):
+                page_content = prepare_passage(
+                    f"المادة: {course_name}\n"
+                    f"الشعبة: {section.get('رقم الشعبة', '')}\n"
+                    f"القاعة: {section.get('رقم القاعة', '')}\n"
+                    f"الدوام: {'; '.join(section.get('الدوام', []))}\n"
+                    f"المدرس: {section.get('المدرس', '')}"
+                )
+                docs.append(Document(
+                    page_content=page_content,
+                    metadata={
+                        "major": major,
+                        "subject": course_name,
+                        "section": section.get("رقم الشعبة", ""),
+                        "room": section.get("رقم القاعة", ""),
+                        "schedule": "; ".join(section.get("الدوام", [])),
+                        "teacher": section.get("المدرس", ""),
+                        "name":"الجدول حسب الفصل الحالي"
+
+                    }
+                ))
+    return docs
+
+
+def load_mandatory_courses():
+    schedule_path = BASE_DIR / "data" / "mandatory_courses.json"
+    with open(schedule_path, "r", encoding="utf-8") as f:
+        schedule_data = json.load(f)
+
+    docs = []
+    for course_name, course_info in schedule_data.items():  # المادة مباشرة
+        for section in course_info.get("الشعب", []):
+            page_content = prepare_passage(
+                f"المادة: {course_name}\n"
+                f"الشعبة: {section.get('رقم الشعبة', '')}\n"
+                f"القاعة: {section.get('رقم القاعة', '')}\n"
+                f"الدوام: {'; '.join(section.get('الدوام', []))}\n"
+                f"المدرس: {section.get('المدرس', '')}\n"
+                f"الحرم: {section.get('الحرم', '')}"
+            )
+            docs.append(Document(
+                page_content=page_content,
+                metadata={
+                    "major":"General",
+                    "subject": course_name,
+                    "section": section.get("رقم الشعبة", ""),
+                    "room": section.get("رقم القاعة", ""),
+                    "schedule": "; ".join(section.get("الدوام", [])),
+                    "teacher": section.get("المدرس", ""),
+                    "campus": section.get("الحرم", ""),
+                    "name":"اجباري الجامعة"
+                }
+            ))
+    return docs
+
+def load_course_info():
+    course_info_path = BASE_DIR / "data" / "majors_plan_dynamic_info.json"
+    with open(course_info_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    docs = []
+    for major, major_data in data.items():
+        for category, info in major_data.items():  # category: "إجباري جامعة" أو "اختياري"
+            required_hours = info.get("عدد الساعات المطلوبة", 0)  # ⬅️ تخزين عدد الساعات المطلوبة
+            for course in info.get("المساقات", []):
+                page_content = prepare_passage(
+                    f"المادة: {course.get('اسم المساق', '')}\n"
+                    f"رقم المساق: {course.get('رقم المساق', '')}\n"
+                    f"عدد الساعات: {course.get('عدد الساعات', '')}\n"
+                    f"المتطلبات السابقة: {', '.join(course.get('المتطلبات السابقة', []))}\n"
+                    f"عدد الساعات المطلوبة للفئة: {required_hours}"  
+                )
+                docs.append(Document(
+                    page_content=page_content,
+                    metadata={
+                        "major": major,
+                        "category": category,
+                        "subject": course.get('اسم المساق', ''),
+                        "course_number": course.get('رقم المساق', ''),
+                        "hours": course.get('عدد الساعات', 0),
+                        "prerequisites": ", ".join(course.get('المتطلبات السابقة', [])),
+                        "required_hours": required_hours, 
+                        "name": "الخطط الدراسية-متغيرة"
+                    }
+                ))
+    return docs
 def load_tips():
     tip_path = BASE_DIR / "data" / "tips.json"
     with open(tip_path, "r", encoding="utf-8") as f:
@@ -172,6 +262,9 @@ all_docs = (
     load_courses() +
     load_projects() +
     load_profs() +
-    load_tips()
+    load_tips()+
+    load_schedule()+
+    load_mandatory_courses()+
+    load_course_info()
 )
 all_docs = [sanitize_metadata(doc) for doc in all_docs]

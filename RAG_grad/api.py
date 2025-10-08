@@ -11,4 +11,4 @@ class QueryRequest(BaseModel):
 @router.post("/ask")
 async def ask_question(request: QueryRequest):
     result = get_answer(request.query, request.major)
-    return result
+    return {"answer": result}

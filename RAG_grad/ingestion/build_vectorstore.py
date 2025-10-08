@@ -1,6 +1,6 @@
-from langchain_huggingface import HuggingFaceEmbeddings   # ✅ التعديل هنا
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from loaders import all_docs
+from .loaders import all_docs
 
 embedding_model = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base")
 def build_db():
@@ -16,6 +16,5 @@ def build_db():
         vectorDB.add_documents(all_docs)
         print("Docs added and DB persisted.")
     return vectorDB
-
 build_db()
 print("done")

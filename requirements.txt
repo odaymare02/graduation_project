@@ -12,6 +12,8 @@ beautifulsoup4
 # LangChain and embeddings
 langchain
 langchain-huggingface
+langchain-openai
+
 chromadb
 
 # Loading PDFs

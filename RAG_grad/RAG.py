@@ -6,8 +6,6 @@ from langchain_chroma import Chroma
 from ingestion.build_vectorstore import build_db
 from prompt_template import prompt_template
 from dotenv import load_dotenv
-from langchain.retrievers.document_compressors import LLMChainFilter
-from langchain.retrievers import ContextualCompressionRetriever
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")

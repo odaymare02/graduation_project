@@ -1,0 +1,25 @@
+# FastAPI and running server
+fastapi
+uvicorn[standard]
+
+# Data validation
+pydantic
+
+# Web scraping
+requests
+beautifulsoup4
+
+# LangChain and embeddings
+langchain
+langchain-huggingface
+chromadb
+
+# Loading PDFs
+pypdf
+
+# HuggingFace Transformers backend
+transformers
+torch
+
+# Environment variables
+python-dotenv

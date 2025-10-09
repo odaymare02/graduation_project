@@ -13,3 +13,4 @@ langchain_openai
 langchain_huggingface
 langchain_chroma
 pypdf
+sentence-transformers

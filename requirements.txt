@@ -5,14 +5,10 @@ langchain_huggingface
 langchain_chroma
 requests
 bs4
-json
-pathlib
 langchain
 langchain_community
 fastapi
 pydantic
-api
 langchain_openai
 langchain_huggingface
 langchain_chroma
-dotenv

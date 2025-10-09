@@ -226,7 +226,7 @@ def load_course_info():
                 ))
     return docs
 def load_tips():
-    tip_path = BASE_DIR / "data" / "tips.json"
+    tip_path = BASE_DIR / "data" / "Tips.json"
     with open(tip_path, "r", encoding="utf-8") as f:
         tips_data = json.load(f)
 

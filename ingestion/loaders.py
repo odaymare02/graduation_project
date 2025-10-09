@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import re
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
 
 
@@ -16,7 +16,6 @@ def prepare_passage(text):
 def clean_text(text):
     return re.sub(r'(?<![\n.،:؛])\n(?![\n])', ' ', text).strip()
 
-# -------------------- تحميل المستندات --------------------
 def load_guide():
     pdf_path = BASE_DIR / "data" / "guide.pdf"
     loader = PyPDFLoader(pdf_path)
@@ -203,7 +202,7 @@ def load_course_info():
     docs = []
     for major, major_data in data.items():
         for category, info in major_data.items():  # category: "إجباري جامعة" أو "اختياري"
-            required_hours = info.get("عدد الساعات المطلوبة", 0)  # ⬅️ تخزين عدد الساعات المطلوبة
+            required_hours = info.get("عدد الساعات المطلوبة", 0)
             for course in info.get("المساقات", []):
                 page_content = prepare_passage(
                     f"المادة: {course.get('اسم المساق', '')}\n"
@@ -255,7 +254,6 @@ def sanitize_metadata(doc: Document) -> Document:
             new_meta[k] = v
     doc.metadata = new_meta
     return doc
-# -------------------- جمع كل المستندات --------------------
 all_docs = (
     load_guide() +
     load_resources() +

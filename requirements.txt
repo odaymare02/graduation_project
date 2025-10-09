@@ -1,27 +1,18 @@
 # FastAPI and running server
-fastapi
 uvicorn[standard]
 
-# Data validation
-pydantic
-
-# Web scraping
+langchain_huggingface
+langchain_chroma
 requests
-beautifulsoup4
-
-# LangChain and embeddings
+bs4
+json
+pathlib
 langchain
-langchain-huggingface
-langchain-openai
-
-chromadb
-
-# Loading PDFs
-pypdf
-
-# HuggingFace Transformers backend
-transformers
-torch
-
-# Environment variables
-python-dotenv
+langchain_community
+fastapi
+pydantic
+api
+langchain_openai
+langchain_huggingface
+langchain_chroma
+dotenv

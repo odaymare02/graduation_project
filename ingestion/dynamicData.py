@@ -65,7 +65,7 @@ def info_according_semester():
 
         all_majors_courses[major_name] = courses
         print(f"✅ تم استخراج {len(courses)} مادة للتخصص {major_name}")
-        with open(r"C:\Users\user\Desktop\grad_project\RAG_grad\data\info_according_semester.json", "w", encoding="utf-8") as f:
+        with open(r"C:\Users\user\Desktop\grad_project\data\info_according_semester.json", "w", encoding="utf-8") as f:
             json.dump(all_majors_courses, f, ensure_ascii=False, indent=4)
 def plan_majors():
     majors = {
@@ -145,7 +145,7 @@ def plan_majors():
             }
 
     # حفظ الداتا في JSON واحد
-    with open(r"C:\Users\user\Desktop\grad_project\RAG_grad\data\majors_plan_dynamic_info.json", "w", encoding="utf-8") as f:
+    with open(r"C:\Users\user\Desktop\grad_project\data\majors_plan_dynamic_info.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     
     print("تم حفظ الخطط لكل التخصصات في majors_plan_dynamic_info.json")
@@ -214,9 +214,54 @@ def require_NNU_material():
         all_courses[course_name] = {"الشعب": sections}
 
     # حفظ في JSON
-    with open(r"C:\Users\user\Desktop\grad_project\RAG_grad\data\mandatory_courses.json", "w", encoding="utf-8") as f:
+    with open(r"C:\Users\user\Desktop\grad_project\data\mandatory_courses.json", "w", encoding="utf-8") as f:
         json.dump(all_courses, f, ensure_ascii=False, indent=4)
     print("تم حفظ البيانات في mandatory_courses.json")
+def get_important_dates(semester="2025-1"):
+    url = "https://zajelbs.najah.edu/servlet/calendar"
+    payload = {"acaSem": semester}
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+
+    # إرسال الطلب
+    response = requests.post(url, data=payload, headers=headers)
+    response.encoding = "windows-1256"
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # العثور على القسم الذي يحتوي على "مواعيد هامة"
+    section = soup.find("font", {"color": "red"})
+    if not section:
+        print("❌ لم يتم العثور على قسم المواعيد الهامة.")
+        return None
+
+    parent_td = section.find_parent("td")
+
+    parts = []
+    for elem in parent_td.contents:
+        if elem.name == "br":
+            continue
+        if elem.name == "b":
+            text = elem.get_text(strip=True)
+            if parts:
+                parts[-1] += " " + text
+            else:
+                parts.append(text)
+        elif elem.name is None:
+            text = elem.strip()
+            if text and not text.startswith("مواعيد"):
+                parts.append(text)
+
+    result = {
+        "مواعيد هامة": parts
+    }
+
+    with open(r"C:\Users\user\Desktop\grad_project\data\important_dates.json", "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+    print("تم حفظ البيانات في important_dates.json")
 # info_according_semester()
 # plan_majors()
-require_NNU_material()
+# require_NNU_material()
+get_important_dates();

@@ -162,17 +162,44 @@ def load_schedule():
                 ))
     return docs
 
+# def load_important_dates():
+#     important_dates_path = BASE_DIR / "data" / "important_dates.json"
+#     with open(important_dates_path, "r", encoding="utf-8") as f:
+#         data = json.load(f)
+
+#     for line in data.get("مواعيد هامة", []):
+#         line = line.strip()
+#         # تجاهل السطر "مواعيد هامة:" أو أي سطر يحتوي فقط على "."
+#         if line == "مواعيد هامة:" or line == ".":
+#             continue
+#         docs = []
+#         page_content = prepare_passage(line)
+#         docs.append(Document(
+#             page_content=page_content,
+#             metadata={
+#                 "type": "مواعيد هامة",
+#                 "content": line,
+#                 "name": "مواعيد هامة الفصل الدراسي",
+#                 "major":"General"
+#             }
+#         ))
+#         # print("---- Document ----")
+#         # print("page_content:", doc.page_content)
+#         # print("metadata:", doc.metadata)
+#         # print("-----------------\n")
+#         return docs
 def load_important_dates():
     important_dates_path = BASE_DIR / "data" / "important_dates.json"
     with open(important_dates_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    docs = []  # خليه قبل اللوب
     for line in data.get("مواعيد هامة", []):
         line = line.strip()
         # تجاهل السطر "مواعيد هامة:" أو أي سطر يحتوي فقط على "."
         if line == "مواعيد هامة:" or line == ".":
             continue
-        docs = []
+
         page_content = prepare_passage(line)
         docs.append(Document(
             page_content=page_content,
@@ -180,15 +207,11 @@ def load_important_dates():
                 "type": "مواعيد هامة",
                 "content": line,
                 "name": "مواعيد هامة الفصل الدراسي",
-                "major":"General"
+                "major": "General"
             }
         ))
-        # print("---- Document ----")
-        # print("page_content:", doc.page_content)
-        # print("metadata:", doc.metadata)
-        # print("-----------------\n")
-        return docs
 
+    return docs  # بعد انتهاء الحلقة
 def load_mandatory_courses():
     schedule_path = BASE_DIR / "data" / "mandatory_courses.json"
     with open(schedule_path, "r", encoding="utf-8") as f:
